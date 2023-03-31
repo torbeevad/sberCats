@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <script src="./api.js" defer></script>
+    <script src="./components/cart.js"></script>
+    <script src="./index.js" defer></script>
+    <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+<div id="homepage">
+    <button class="add-btn" type="button">Добавить</button>
+    <div class="content"></div>
+    <div class="create-edit-modal-form">
+        <form action="">
+            <label for="id" required>Id</label>
+            <input id="id" name="id" placeholder="Id" readonly/>
+            <input id="name" name="name" placeholder="Имя" required/>
+            <input id="image" name="image" placeholder="Ссылка на изображение"/>
+            <input id="age" name="age" type="number" placeholder="Возраст" required/>
+            <input id="rate" name="rate" type="number" placeholder="Рейтинг" required/>
+            <textarea
+                    id="description"
+                    name="description"
+                    rows="3"
+                    placeholder="Описание"
+                    required
+            ></textarea>
+            <button type="submit">Ok</button>
+        </form>
+    </div>
+    <div class="cat-card-view">
+        <div class="cat-card-view_name"></div>
+        <img class="cat-card-view_img" src="" alt="">
+        <div class="cat-card-view_age"></div>
+        <div class="cat-card-view_rate"></div>
+        <p class="cat-card-view_description"></p>
+    </div>
+</div>
+</body>
+</html>
