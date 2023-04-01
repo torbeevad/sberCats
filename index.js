@@ -1,27 +1,53 @@
 const homepage = document.getElementById('homepage');
-console.log(homepage);
+const storage = window.localStorage
+console.log(homepage)
 
+document.addEventListener(("click"), (e) => console.log(e.target))
+
+const refreshCatsAndContentSync = () => {
+    const content = document.getElementsByClassName('content')[0];
+    content.innerHTML = '';
+
+    const sortCats = JSON.parse(storage.getItem('cats')).sort((a, b) => a.id - b.id)
+    const cards = sortCats.reduce(
+        (acc, el) => (acc += generateCard(el)),
+        ''
+    );
+    content.insertAdjacentHTML('afterbegin', cards);
+};
 
 const refreshCatsAndContent = () => {
     const content = document.getElementsByClassName('content')[0];
     content.innerHTML = '';
 
+    api.getIdsOfCat().then((res) => {
+        storage.setItem('ids', JSON.stringify(res.sort((a, b) => a - b)))
+    })
+
     api.getAllCats().then((res) => {
-        console.log(res);
-        const cards = res.reduce((acc, el) => (acc += generateCard(el)), '');
-        content.insertAdjacentHTML('afterbegin', cards);
-    });
+        storage.setItem('cats', JSON.stringify(res.sort((a, b) => a.id - b.id)))
+    }).then(() => refreshCatsAndContentSync())
 };
 
 refreshCatsAndContent();
 
-
-let allIds = []
 let idFlag = 0
-api.getIdsOfCat().then((res) => {
-    allIds = res
-})
 
+const getNewIdOfCatSync = () => {
+    let arr = JSON.parse(storage.getItem('cats')).map(el => el.id).sort((a, b) => a - b)
+
+    if (!arr.length) {
+        idFlag = 1
+        return 1
+    } else {
+        for (let i = 0; i <= arr.length; i++) {
+            if (i + 1 !== arr[i]) {
+                idFlag = i + 1
+                return i + 1
+            }
+        }
+    }
+};
 
 document
     .getElementsByClassName('content')[0]
@@ -44,56 +70,70 @@ document
                 case 'cat-card-delete-btn': {
                     api.deleteCat(event.target.value).then((res) => {
                         console.log(res);
-                        refreshCatsAndContent();
+                        deleteCatFromLocalStorage(event.target.value)
+                        refreshCatsAndContentSync();
                     });
                     break
                 }
             }
-
         }
     });
 
+const addCatInLocalStorage = (cat) => {
+    storage.setItem(
+        'cats',
+        JSON.stringify([...JSON.parse(storage.getItem('cats')), cat].sort((a, b) => a.id - b.id))
+    );
+    storage.setItem("ids", JSON.stringify([...JSON.parse(storage.getItem('ids')), cat.id].sort((a, b) => a - b)))
+};
+
+const deleteCatFromLocalStorage = (catId) => {
+    storage.setItem(
+        'cats',
+        JSON.stringify(
+            JSON.parse(storage.getItem('cats')).filter((el) => el.id !== Number(catId)) // загуглить и поиграться с filter
+        )
+    );
+    storage.setItem("ids", JSON.stringify(JSON.parse(storage.getItem('ids')).filter((el) => el !== Number(catId))))
+};
+
+const updateCatInLocalStorage = (cat) => {
+    cat.id = Number(cat.id)
+    const cats = JSON.parse(storage.getItem('cats'))
+    cats.splice(cat.id - 1, 1, cat)
+    storage.setItem("cats", JSON.stringify(cats))
+}
 
 document.forms[0].addEventListener('submit', (event) => {
     event.preventDefault();
-    console.log(event.target.value);
     const formData = new FormData(document.forms[0]);
     const body = Object.fromEntries(formData.entries());
-    if (allIds.includes(Number(idFlag))) {
+
+    body.id = Number(body.id)
+    body.age = Number(body.age)
+    body.rate = Number(body.rate)
+
+    if (storage.ids.includes(Number(idFlag))) {
         api.updateCat(body).then(res => {
-            console.log(res);
-            refreshCatsAndContent();
+            console.log(res)
+            updateCatInLocalStorage(body)
+            refreshCatsAndContentSync();
         })
     } else {
         api.addCat(body).then(res => {
             console.log(res);
-            refreshCatsAndContent()
+            addCatInLocalStorage(body)
+            refreshCatsAndContentSync()
         })
     }
-    document.querySelector(".create-edit-modal-form").classList.remove("active");
-
+    document.querySelector(".create-edit-modal-form").classList.remove("active")
 });
-
 
 document.querySelector(".add-btn").addEventListener("click", (event) => {
     event.preventDefault();
-    document.querySelector("#id").value = getNewIdOfCat().then((res) => {
-        if (res === -Infinity) {
-            document.querySelector("#id").value = 1;
-            idFlag = 1
-        } else {
-            document.querySelector("#id").value = res
-            idFlag = res
-        }
-    }).then(() => refreshCatsAndContent());
+    document.querySelector("#id").value = getNewIdOfCatSync()
+    refreshCatsAndContentSync()
     document.querySelector(".create-edit-modal-form").classList.toggle("active");
 })
 
-
-const getNewIdOfCat = () => {
-    return api.getIdsOfCat().then((res) => {
-        return Math.max(...res) + 1;
-    });
-};
-
-
+document.querySelector(".refresh-btn").addEventListener("click", () => refreshCatsAndContentSync())
