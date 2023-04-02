@@ -12,19 +12,24 @@
 </head>
 <body>
 <header>
+    <div>logo</div>
     <button class="refresh-btn" type="button">Обновить</button>
     <button class="add-btn" type="button">Добавить</button>
 </header>
 <div id="homepage">
     <div class="content"></div>
+
     <div class="create-edit-modal-form">
+        <div class="popup-close-btn">+</div>
+        <h2>Добавить питомца</h2>
         <form action="">
-            <label for="id" required>Id</label>
-            <input id="id" name="id" placeholder="Id" readonly/>
+            <div class="form-img"></div>
+            <input id="id" name="id" placeholder="Id" type="hidden"/>
             <input id="name" name="name" placeholder="Имя" required/>
+            <input id="age" name="age" type="number" placeholder="Возраст" min="0" required/>
             <input id="image" name="image" placeholder="Ссылка на изображение"/>
-            <input id="age" name="age" type="number" placeholder="Возраст" required/>
-            <input id="rate" name="rate" type="number" placeholder="Рейтинг" required/>
+            <input id="rate" type="number" name="rate" placeholder="Рейтинг (0-10)" min="0" max="10" required>
+            <label>Любимчик <input type="checkbox" name="favourite" placeholder=""></label>
             <textarea
                     id="description"
                     name="description"
@@ -32,7 +37,7 @@
                     placeholder="Описание"
                     required
             ></textarea>
-            <button type="submit">Ok</button>
+            <button id="submit" type="submit">Добавить котика</button>
         </form>
     </div>
     <div class="cat-card-view">
@@ -43,5 +48,12 @@
         <p class="cat-card-view_description"></p>
     </div>
 </div>
+<footer>
+    <nav>
+        <a href="">#</a>
+        <a href="">#</a>
+        <a href="">#</a>
+    </nav>
+</footer>
 </body>
 </html>

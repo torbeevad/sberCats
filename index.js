@@ -112,6 +112,7 @@ document.forms[0].addEventListener('submit', (event) => {
     body.id = Number(body.id)
     body.age = Number(body.age)
     body.rate = Number(body.rate)
+    console.log(body)
 
     if (storage.ids.includes(Number(idFlag))) {
         api.updateCat(body).then(res => {
