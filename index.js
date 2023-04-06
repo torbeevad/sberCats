@@ -1,8 +1,13 @@
-const homepage = document.getElementById('homepage');
 const storage = window.localStorage
-console.log(homepage)
+const content = document.getElementsByClassName('content')[0]
+const form = document.forms[0]
+const closeBtn = document.querySelector(".close-btn")
+const addBtn = document.querySelector(".add-btn")
+const refreshBtn = document.querySelector(".refresh-btn")
 
-document.addEventListener(("click"), (e) => console.log(e.target))
+let idFlag = 0
+
+document.addEventListener("click", (e) => console.log(e.target))
 
 const refreshCatsAndContentSync = () => {
     const content = document.getElementsByClassName('content')[0];
@@ -31,8 +36,6 @@ const refreshCatsAndContent = () => {
 
 refreshCatsAndContent();
 
-let idFlag = 0
-
 const getNewIdOfCatSync = () => {
     let arr = JSON.parse(storage.getItem('cats')).map(el => el.id).sort((a, b) => a - b)
 
@@ -49,35 +52,31 @@ const getNewIdOfCatSync = () => {
     }
 };
 
-document
-    .getElementsByClassName('content')[0]
-    .addEventListener('click', (event) => {
-        document.querySelector(".create-edit-modal-form").classList.remove("active")
-        document.querySelector(".cat-card-view").classList.remove("active")
-        if (event.target.tagName === 'BUTTON') {
-            switch (event.target.className) {
-                case 'cat-card-view-btn': {
-                    console.log(event.target)
-                    document.querySelector(".cat-card-view").classList.toggle("active");
-                    break
-                }
-                case 'cat-card-update-btn': {
-                    document.querySelector(".create-edit-modal-form").classList.add("active");
-                    document.querySelector("#id").value = event.target.value;
-                    idFlag = event.target.value;
-                    break;
-                }
-                case 'cat-card-delete-btn': {
-                    api.deleteCat(event.target.value).then((res) => {
-                        console.log(res);
-                        deleteCatFromLocalStorage(event.target.value)
-                        refreshCatsAndContentSync();
-                    });
-                    break
-                }
+content.addEventListener('click', (event) => {
+    if (event.target.tagName === 'BUTTON') {
+        switch (event.target.className) {
+            case 'cat-card-view-btn': {
+                openCatCardPopup(Number(event.target.value))
+                break
+            }
+            case 'cat-card-update-btn': {
+                document.querySelector(".create-edit-modal-form").classList.add("active");
+                document.querySelector("#id").value = event.target.value;
+                dataCatOnUpdateForm(Number(event.target.value))
+                idFlag = event.target.value;
+                break;
+            }
+            case 'cat-card-delete-btn': {
+                api.deleteCat(event.target.value).then((res) => {
+                    console.log(res);
+                    deleteCatFromLocalStorage(event.target.value)
+                    refreshCatsAndContentSync();
+                });
+                break
             }
         }
-    });
+    }
+});
 
 const addCatInLocalStorage = (cat) => {
     storage.setItem(
@@ -91,28 +90,52 @@ const deleteCatFromLocalStorage = (catId) => {
     storage.setItem(
         'cats',
         JSON.stringify(
-            JSON.parse(storage.getItem('cats')).filter((el) => el.id !== Number(catId)) // загуглить и поиграться с filter
+            JSON.parse(storage.getItem('cats')).filter((el) => el.id !== Number(catId))
         )
     );
     storage.setItem("ids", JSON.stringify(JSON.parse(storage.getItem('ids')).filter((el) => el !== Number(catId))))
 };
 
 const updateCatInLocalStorage = (cat) => {
-    cat.id = Number(cat.id)
     const cats = JSON.parse(storage.getItem('cats'))
     cats.splice(cat.id - 1, 1, cat)
     storage.setItem("cats", JSON.stringify(cats))
 }
 
-document.forms[0].addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(document.forms[0]);
-    const body = Object.fromEntries(formData.entries());
+const openCatCardPopup = (value) => {
+    const eventCat = JSON.parse(storage.getItem('cats'))[value - 1]
+    console.log(eventCat)
+    const content = document.getElementsByClassName('content')[0];
+    content.insertAdjacentHTML('afterbegin', generateCatCardPopup(eventCat));
 
+    let catPopup = document.querySelector('.popup-wrapper-cat-card');
+    let closeCatPopup = document.querySelector('.popup-close-cat-card');
+    closeCatPopup.addEventListener('click', () => {
+        catPopup.remove();
+    });
+};
+
+const dataCatOnUpdateForm = (value) => {
+    const eventCat = JSON.parse(storage.getItem('cats'))[value - 1]
+    document.querySelector(".form-h2").innerText = "Изменить питомца"
+    document.querySelector("#name").placeholder = eventCat.name;
+    document.querySelector("#age").placeholder = eventCat.age;
+    document.querySelector("#rate").placeholder = eventCat.rate;
+    document.querySelector("#description").placeholder = eventCat.description;
+    document.querySelector(".form-img").style.backgroundImage = `url(${eventCat.image})`;
+    document.querySelector("#image").value = eventCat.image;
+    document.querySelector("#submit").innerText = "Изменить";
+}
+
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const body = Object.fromEntries(formData.entries());
     body.id = Number(body.id)
     body.age = Number(body.age)
     body.rate = Number(body.rate)
-    console.log(body)
+    body.favourite = document.querySelector("#favourite").checked
+    console.log("body", body)
 
     if (storage.ids.includes(Number(idFlag))) {
         api.updateCat(body).then(res => {
@@ -127,14 +150,21 @@ document.forms[0].addEventListener('submit', (event) => {
             refreshCatsAndContentSync()
         })
     }
+    form.reset()
     document.querySelector(".create-edit-modal-form").classList.remove("active")
 });
 
-document.querySelector(".add-btn").addEventListener("click", (event) => {
+addBtn.addEventListener("click", (event) => {
     event.preventDefault();
+    form.reset()
     document.querySelector("#id").value = getNewIdOfCatSync()
     refreshCatsAndContentSync()
-    document.querySelector(".create-edit-modal-form").classList.toggle("active");
+    document.querySelector(".create-edit-modal-form").classList.add("active");
 })
 
-document.querySelector(".refresh-btn").addEventListener("click", () => refreshCatsAndContentSync())
+closeBtn.addEventListener("click", (event) => {
+    form.reset()
+    document.querySelector(".create-edit-modal-form").classList.remove("active");
+})
+
+refreshBtn.addEventListener("click", () => refreshCatsAndContent())

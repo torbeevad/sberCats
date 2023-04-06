@@ -23,7 +23,7 @@ header, footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 50px;
+    padding: 0 20px;
     height: 80px;
 }
 
@@ -31,16 +31,16 @@ button:hover {
     cursor: pointer;
 }
 
+.icon {
+    font-size: 25px;
+}
+
 .content {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    align-content: stretch;
+    display: grid;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
     gap: 10px;
     width: 70%;
-    min-height: calc(100vh - 200px);
+    height: calc(100vh - 200px);
     padding: 20px 20px;
 }
 
@@ -50,8 +50,9 @@ button:hover {
     justify-content: flex-end;
     align-items: center;
     border: 1px solid green;
+    width: auto;
+    height: 300px;
     border-radius: 20px;
-    max-width: 300px;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -86,19 +87,59 @@ button:hover {
     padding: 20px;
 }
 
-.cat-card-view {
+.popup-wrapper-cat-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: #0006;
+    z-index: 10;
+    display: flex;
+}
+
+/*.popup-wrapper-cat-card.active {*/
+/*    display: flex;*/
+/*}*/
+
+.popup-cat-card {
     display: none;
     flex-direction: column;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
     position: absolute;
     width: 700px;
     height: 500px;
     top: calc(50% - 250px);
     left: calc(50% - 350px);
-    background-color: aliceblue;
     border: 1px solid red;
     border-radius: 20px;
+    background-size: cover;
+    box-sizing: border-box;
+    color: white;
+}
+
+.popup-cat-card.active {
+    display: flex;
+}
+
+.popup-close-cat-card {
+    width: max-content;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.popup-description-wrapper {
+    display: flex;
+    height: 30%;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    justify-content: space-between;
 }
 
 .active {
@@ -110,6 +151,7 @@ button:hover {
     justify-content: center;
     align-items: center;
     font-size: 20px;
+    margin-right: 10px;
     width: 150px;
     height: 40px;
     border: green 1px solid;
@@ -117,7 +159,11 @@ button:hover {
     background-color: beige;
 }
 
-.popup-close-btn {
+.add-btn:active, .refresh-btn:active {
+    background-color: green;
+}
+
+.close-btn {
     display: block;
     position: absolute;
     top: 10px;
@@ -125,6 +171,10 @@ button:hover {
     transform: rotate(45deg);
     font-size: 30px;
     font-weight: bold;
+}
+
+.close-btn:hover {
+    cursor: pointer;
 }
 
 .popup-close-btn:hover {
@@ -152,6 +202,8 @@ input, textarea, label, #submit:hover {
 }
 
 .form-img {
+    background: no-repeat;
+    background-size: cover;
     grid-column: 1;
     grid-row-start: 1;
     grid-row-end: 4;
@@ -194,4 +246,135 @@ label {
 #submit {
     grid-column: 3;
     grid-row: 4;
+}
+
+#submit:active {
+    background-color: #0006;
+    color: #fff;
+    box-shadow: 0 0 2px 0 #0004;
+}
+
+@media (max-width: 740px) {
+    h2 {
+        margin: 20px 0 20px 0;
+        display: flex;
+        justify-self: center;
+    }
+
+    .content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 10px;
+        width: 90%;
+        height: calc(100vh - 200px);
+        padding: 20px 20px;
+    }
+
+    header, footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        height: 80px;
+    }
+
+    .create-edit-modal-form {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: aliceblue;
+        display: none;
+        border: none;
+        border-radius: 0;
+        padding: 10px;
+    }
+
+    .active {
+        display: grid;
+    }
+
+    .popup-cat-card {
+        display: none;
+        flex-direction: column;
+        justify-content: end;
+        align-items: center;
+        position: absolute;
+        padding: 10px;
+        width: 95%;
+        top: 20%;
+        left: 2.5%;
+        border: 1px solid red;
+        border-radius: 20px;
+        background: white no-repeat;
+        background-size: contain;
+    }
+
+    .popup-cat-card.active {
+        display: flex;
+    }
+
+    .popup-description-wrapper {
+        display: flex;
+        height: 40%;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        justify-content: space-between;
+        color: black;
+    }
+
+    form {
+        display: grid;
+        grid-gap: 10px;
+        height: 90vh;
+        grid-template-columns: repeat(1, 13fr);
+    }
+
+    .form-img {
+        grid-column: 1;
+        grid-row-start: 1;
+        grid-row-end: 7;
+    }
+
+    #name {
+        grid-column: 1;
+        grid-row: 8;
+    }
+
+    #age {
+        grid-column: 1;
+        grid-row: 9;
+    }
+
+    #rate {
+        grid-column: 1;
+        grid-row: 10;
+    }
+
+    label {
+        display: flex;
+        justify-content: space-around;
+        grid-column: 1;
+        grid-row: 11;
+        align-items: center;
+    }
+
+    #description {
+        grid-column: 1;
+        grid-row-start: 12;
+        grid-row-end: 14;
+    }
+
+    #image {
+        grid-column: 1;
+        grid-row: 7;
+    }
+
+    #submit {
+        grid-column: 1;
+        grid-row: 14;
+    }
 }

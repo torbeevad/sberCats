@@ -5,14 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
+    <script src="fa/js/all.min.js" defer></script>
     <script src="./api.js" defer></script>
-    <script src="./components/cart.js"></script>
+    <script src="./components/cart.js" defer></script>
+    <script src="components/catCardPopup.js" defer></script>
     <script src="./index.js" defer></script>
+    <link href="fa/css/all.min.css">
     <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
 <header>
-    <div>logo</div>
+    <div class="icon"><i class="fa-solid fa-cat"></i> КотКотэ</div>
     <button class="refresh-btn" type="button">Обновить</button>
     <button class="add-btn" type="button">Добавить</button>
 </header>
@@ -20,8 +23,8 @@
     <div class="content"></div>
 
     <div class="create-edit-modal-form">
-        <div class="popup-close-btn">+</div>
-        <h2>Добавить питомца</h2>
+        <div class="close-btn">+</div>
+        <h2 class="form-h2">Добавить питомца</h2>
         <form action="">
             <div class="form-img"></div>
             <input id="id" name="id" placeholder="Id" type="hidden"/>
@@ -29,30 +32,22 @@
             <input id="age" name="age" type="number" placeholder="Возраст" min="0" required/>
             <input id="image" name="image" placeholder="Ссылка на изображение"/>
             <input id="rate" type="number" name="rate" placeholder="Рейтинг (0-10)" min="0" max="10" required>
-            <label>Любимчик <input type="checkbox" name="favourite" placeholder=""></label>
+            <label>Любимчик <input type="checkbox" id="favourite" name="favourite"><i class="fa-light fa-heart"></i></label>
             <textarea
                     id="description"
                     name="description"
-                    rows="3"
                     placeholder="Описание"
                     required
             ></textarea>
-            <button id="submit" type="submit">Добавить котика</button>
+            <button id="submit" type="submit">Добавить</button>
         </form>
-    </div>
-    <div class="cat-card-view">
-        <div class="cat-card-view_name"></div>
-        <img class="cat-card-view_img" src="" alt="">
-        <div class="cat-card-view_age"></div>
-        <div class="cat-card-view_rate"></div>
-        <p class="cat-card-view_description"></p>
     </div>
 </div>
 <footer>
     <nav>
-        <a href="">#</a>
-        <a href="">#</a>
-        <a href="">#</a>
+        <a class="icon" href=""><i class="fa-brands fa-vk"></i></a>
+        <a class="icon" href=""><i class="fa-brands fa-facebook"></i></a>
+        <a class="icon" href=""><i class="fa-brands fa-telegram"></i></a>
     </nav>
 </footer>
 </body>
