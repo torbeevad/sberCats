@@ -100,10 +100,6 @@ button:hover {
     display: flex;
 }
 
-/*.popup-wrapper-cat-card.active {*/
-/*    display: flex;*/
-/*}*/
-
 .popup-cat-card {
     display: none;
     flex-direction: column;
